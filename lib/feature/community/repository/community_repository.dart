@@ -65,6 +65,18 @@ class CommunityRepository {
     }
   }
 
+  FutureVoid addMod(String communityName, List<String> mods) async {
+    try {
+      return right(
+        _communities.doc(communityName).update({'mods': mods}),
+      );
+    } on FirebaseException catch (error) {
+      throw error.message!;
+    } catch (error) {
+      return left(Failure(error.toString()));
+    }
+  }
+
   Stream<List<Community>> searchCommunity(String query) {
     return _communities
         .where(
@@ -86,5 +98,29 @@ class CommunityRepository {
       }
       return communities;
     });
+  }
+
+  FutureVoid joinCommunity(String communityName, String uid) async {
+    try {
+      return right(_communities.doc(communityName).update({
+        'members': FieldValue.arrayUnion([uid]),
+      }));
+    } on FirebaseException catch (error) {
+      throw error.message!;
+    } catch (error) {
+      return left(Failure(error.toString()));
+    }
+  }
+
+  FutureVoid leaveCommunity(String communityName, String uid) async {
+    try {
+      return right(_communities.doc(communityName).update({
+        'members': FieldValue.arrayRemove([uid]),
+      }));
+    } on FirebaseException catch (error) {
+      throw error.message!;
+    } catch (error) {
+      return left(Failure(error.toString()));
+    }
   }
 }

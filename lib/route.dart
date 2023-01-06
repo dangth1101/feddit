@@ -1,4 +1,5 @@
 import 'package:feddit/feature/authentication/screen/login_screen.dart';
+import 'package:feddit/feature/community/screen/add_mod_screen.dart';
 import 'package:feddit/feature/community/screen/community_screen.dart';
 import 'package:feddit/feature/community/screen/create_community_screen.dart';
 import 'package:feddit/feature/community/screen/edit_community_screen.dart';
@@ -27,6 +28,11 @@ final logInRoute = RouteMap(routes: {
       ),
   '/edit-community/:name': (routeData) => MaterialPage(
         child: EditCommunityScreen(
+          name: routeData.pathParameters['name']!,
+        ),
+      ),
+  '/add-mod/:name': (routeData) => MaterialPage(
+        child: AddModScreen(
           name: routeData.pathParameters['name']!,
         ),
       ),

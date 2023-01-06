@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:feddit/core/constant/constant.dart';
+import 'package:feddit/core/failure.dart';
 import 'package:feddit/core/provider/storage_repository_provider.dart';
 import 'package:feddit/core/utils.dart';
 import 'package:feddit/feature/authentication/controller/auth_controller.dart';
@@ -8,6 +9,7 @@ import 'package:feddit/feature/community/repository/community_repository.dart';
 import 'package:feddit/model/community_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:routemaster/routemaster.dart';
 
 final userCommunityProvider = StreamProvider((ref) {
@@ -123,5 +125,34 @@ class CommunityController extends StateNotifier<bool> {
 
   Stream<List<Community>> searchCommunity(String query) {
     return _communityRepository.searchCommunity(query);
+  }
+
+  void joinCommunity(Community community, BuildContext context) async {
+    final user = _ref.read(userProvider)!;
+
+    Either<Failure, void> res;
+    if (community.members.contains(user.uid)) {
+      res = await _communityRepository.leaveCommunity(community.name, user.uid);
+    } else {
+      res = await _communityRepository.joinCommunity(community.name, user.uid);
+    }
+
+    res.fold((l) => showSnackBar(context, l.message), (r) {
+      if (community.members.contains(user.uid)) {
+        showSnackBar(context, 'Community left successfully!');
+      } else {
+        showSnackBar(context, 'Community join successfully!');
+      }
+    });
+  }
+
+  void addMod(
+      String communityName, List<String> mods, BuildContext context) async {
+    final res = await _communityRepository.addMod(communityName, mods);
+
+    res.fold(
+      (l) => showSnackBar(context, l.message),
+      (r) => Routemaster.of(context).pop(),
+    );
   }
 }
