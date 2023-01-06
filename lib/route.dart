@@ -5,6 +5,8 @@ import 'package:feddit/feature/community/screen/create_community_screen.dart';
 import 'package:feddit/feature/community/screen/edit_community_screen.dart';
 import 'package:feddit/feature/community/screen/mod_tools_screen.dart';
 import 'package:feddit/feature/home/screen/home_screen.dart';
+import 'package:feddit/feature/user_profile/screen/edit_user_profiile_screen.dart';
+import 'package:feddit/feature/user_profile/screen/user_profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:routemaster/routemaster.dart';
 
@@ -21,6 +23,11 @@ final logInRoute = RouteMap(routes: {
           name: route.pathParameters['name']!,
         ),
       ),
+  '/u/:uid': (route) => MaterialPage(
+        child: UserProfileScreen(
+          uid: route.pathParameters['uid']!,
+        ),
+      ),
   '/mod-tools/:name': (routeData) => MaterialPage(
         child: ModToolsScreen(
           name: routeData.pathParameters['name']!,
@@ -29,6 +36,11 @@ final logInRoute = RouteMap(routes: {
   '/edit-community/:name': (routeData) => MaterialPage(
         child: EditCommunityScreen(
           name: routeData.pathParameters['name']!,
+        ),
+      ),
+  '/edit-user-profile/:uid': (routeData) => MaterialPage(
+        child: EditUserProfileScreen(
+          uid: routeData.pathParameters['uid']!,
         ),
       ),
   '/add-mod/:name': (routeData) => MaterialPage(
