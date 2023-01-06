@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "295927756268",
+    "project_id": "feddit-200e5",
+    "storage_bucket": "feddit-200e5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:295927756268:android:fd0d9c798c6905782efcc9",
+        "android_client_info": {
+          "package_name": "com.example.feddit"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "295927756268-hejstr6orll9a6mlbg1ufea8vt32mnfr.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.feddit",
+            "certificate_hash": "f7e13307969701d404adbf69301b68649176b0d8"
+          }
+        },
+        {
+          "client_id": "295927756268-cj0k0ugq11824uv4cvmaavvgvjib3sdl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCboh-AioqXKdzVnDk_JNpC9_jEsTPrmDM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "295927756268-cj0k0ugq11824uv4cvmaavvgvjib3sdl.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "295927756268-5uqm3ttksilq3lqsjuj948qpenundoaa.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.feddit"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
