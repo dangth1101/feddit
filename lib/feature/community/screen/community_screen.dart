@@ -1,5 +1,6 @@
 import 'package:feddit/core/common/error_text.dart';
 import 'package:feddit/core/common/loading.dart';
+import 'package:feddit/core/common/post_card.dart';
 import 'package:feddit/feature/authentication/controller/auth_controller.dart';
 import 'package:feddit/feature/community/controller/community_controller.dart';
 import 'package:feddit/model/community_model.dart';
@@ -113,7 +114,21 @@ class CommunityScreen extends ConsumerWidget {
                   )
                 ];
               },
-              body: Container(),
+              body: ref.watch(communityPostProvider(community.name)).when(
+                    data: (posts) {
+                      return ListView.builder(
+                        itemCount: posts.length,
+                        itemBuilder: ((context, index) {
+                          final post = posts[index];
+                          return PostCard(post: post);
+                        }),
+                      );
+                    },
+                    error: (error, stackTrace) {
+                      return ErrorText(error: error.toString());
+                    },
+                    loading: () => const Loading(),
+                  ),
             ),
             error: (error, stackTrace) => ErrorText(error: error.toString()),
             loading: () => const Loading(),

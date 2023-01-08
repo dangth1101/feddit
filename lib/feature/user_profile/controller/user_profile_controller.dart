@@ -1,9 +1,12 @@
 import 'dart:io';
 
+import 'package:feddit/core/provider/firebase_provider.dart';
 import 'package:feddit/core/provider/storage_repository_provider.dart';
 import 'package:feddit/core/utils.dart';
 import 'package:feddit/feature/authentication/controller/auth_controller.dart';
+import 'package:feddit/feature/post/repository/post_repository.dart';
 import 'package:feddit/feature/user_profile/repository/user_profile_repository.dart';
+import 'package:feddit/model/post_mode.dart';
 import 'package:feddit/model/user_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -18,6 +21,10 @@ final userProfileControllerProvider =
     storageRepository: storageRepository,
     ref: ref,
   );
+});
+
+final userPostProvider = StreamProvider.family((ref, String uid) {
+  return ref.read(userProfileControllerProvider.notifier).getUserPost(uid);
 });
 
 class UserProfileController extends StateNotifier<bool> {
@@ -78,5 +85,9 @@ class UserProfileController extends StateNotifier<bool> {
       _ref.read(userProvider.notifier).update((state) => user);
       Routemaster.of(context).pop();
     });
+  }
+
+  Stream<List<Post>> getUserPost(String uid) {
+    return _userProfileRepository.getUserPost(uid);
   }
 }

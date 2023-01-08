@@ -7,6 +7,7 @@ import 'package:feddit/core/utils.dart';
 import 'package:feddit/feature/authentication/controller/auth_controller.dart';
 import 'package:feddit/feature/community/repository/community_repository.dart';
 import 'package:feddit/model/community_model.dart';
+import 'package:feddit/model/post_mode.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fpdart/fpdart.dart';
@@ -36,6 +37,10 @@ final communityControllerProvider =
     storageRepository: storageRepository,
     ref: ref,
   );
+});
+
+final communityPostProvider = StreamProvider.family((ref, String name) {
+  return ref.read(communityRepositoryProvider).getCommunityPost(name);
 });
 
 class CommunityController extends StateNotifier<bool> {
@@ -154,5 +159,9 @@ class CommunityController extends StateNotifier<bool> {
       (l) => showSnackBar(context, l.message),
       (r) => Routemaster.of(context).pop(),
     );
+  }
+
+  Stream<List<Post>> getCommunityPost(String name) {
+    return _communityRepository.getCommunityPost(name);
   }
 }

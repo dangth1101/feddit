@@ -4,6 +4,7 @@ import 'package:feddit/core/failure.dart';
 import 'package:feddit/core/provider/firebase_provider.dart';
 import 'package:feddit/core/type_def.dart';
 import 'package:feddit/model/community_model.dart';
+import 'package:feddit/model/post_mode.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fpdart/fpdart.dart';
 
@@ -19,6 +20,9 @@ class CommunityRepository {
 
   CollectionReference get _communities =>
       _firestore.collection(FirebaseConstant.communitiesCollection);
+
+  CollectionReference get _posts =>
+      _firestore.collection(FirebaseConstant.postsCollection);
 
   FutureVoid createCommunity(Community community) async {
     try {
@@ -122,5 +126,17 @@ class CommunityRepository {
     } catch (error) {
       return left(Failure(error.toString()));
     }
+  }
+
+  Stream<List<Post>> getCommunityPost(String communityName) {
+    return _posts
+        .where('communityName', isEqualTo: communityName)
+        .orderBy('createdAt', descending: true)
+        .snapshots()
+        .map(
+          (event) => event.docs
+              .map((e) => Post.fromMap(e.data() as Map<String, dynamic>))
+              .toList(),
+        );
   }
 }

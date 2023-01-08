@@ -6,6 +6,7 @@ import 'package:feddit/feature/community/screen/edit_community_screen.dart';
 import 'package:feddit/feature/community/screen/mod_tools_screen.dart';
 import 'package:feddit/feature/home/screen/home_screen.dart';
 import 'package:feddit/feature/post/screen/add_post_type_screen.dart';
+import 'package:feddit/feature/post/screen/comment_screen.dart';
 import 'package:feddit/feature/user_profile/screen/edit_user_profiile_screen.dart';
 import 'package:feddit/feature/user_profile/screen/user_profile_screen.dart';
 import 'package:flutter/material.dart';
@@ -52,6 +53,11 @@ final logInRoute = RouteMap(routes: {
   '/add-post/:type': (routeData) => MaterialPage(
         child: AddPostTypeScreen(
           type: routeData.pathParameters['type']!,
+        ),
+      ),
+  '/post/:postId/comments': (routeData) => MaterialPage(
+        child: CommentScreen(
+          postId: routeData.pathParameters['postId']!,
         ),
       ),
 });

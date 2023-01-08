@@ -1,6 +1,8 @@
 import 'package:feddit/core/common/error_text.dart';
 import 'package:feddit/core/common/loading.dart';
+import 'package:feddit/core/common/post_card.dart';
 import 'package:feddit/feature/authentication/controller/auth_controller.dart';
+import 'package:feddit/feature/user_profile/controller/user_profile_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:routemaster/routemaster.dart';
@@ -84,7 +86,21 @@ class UserProfileScreen extends ConsumerWidget {
                   )
                 ];
               },
-              body: Container(),
+              body: ref.watch(userPostProvider(uid)).when(
+                    data: (posts) {
+                      return ListView.builder(
+                        itemCount: posts.length,
+                        itemBuilder: ((context, index) {
+                          final post = posts[index];
+                          return PostCard(post: post);
+                        }),
+                      );
+                    },
+                    error: (error, stackTrace) {
+                      return ErrorText(error: error.toString());
+                    },
+                    loading: () => const Loading(),
+                  ),
             ),
             error: (error, stackTrace) => ErrorText(error: error.toString()),
             loading: () => const Loading(),
