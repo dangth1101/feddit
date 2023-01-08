@@ -1,6 +1,7 @@
 import 'package:feddit/core/common/error_text.dart';
 import 'package:feddit/core/common/loading.dart';
 import 'package:feddit/core/common/post_card.dart';
+import 'package:feddit/feature/authentication/controller/auth_controller.dart';
 import 'package:feddit/feature/post/controller/post_controller.dart';
 import 'package:feddit/feature/post/widget/comment_card.dart';
 import 'package:feddit/model/post_mode.dart';
@@ -37,6 +38,8 @@ class _CommentScreenState extends ConsumerState<CommentScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final user = ref.watch(userProvider)!;
+    final isGuest = user.isGuest;
     return Scaffold(
       appBar: AppBar(),
       body: ref.watch(getPostByIdProvider(widget.postId)).when(
@@ -44,15 +47,16 @@ class _CommentScreenState extends ConsumerState<CommentScreen> {
               return Column(
                 children: [
                   PostCard(post: post),
-                  TextField(
-                    onSubmitted: ((value) => addComment(post)),
-                    controller: commentController,
-                    decoration: const InputDecoration(
-                      hintText: 'What are your thought?',
-                      filled: true,
-                      border: InputBorder.none,
+                  if (!isGuest)
+                    TextField(
+                      onSubmitted: ((value) => addComment(post)),
+                      controller: commentController,
+                      decoration: const InputDecoration(
+                        hintText: 'What are your thought?',
+                        filled: true,
+                        border: InputBorder.none,
+                      ),
                     ),
-                  ),
                   ref.watch(getPostCommentProvider(widget.postId)).when(
                         data: (data) {
                           return Expanded(

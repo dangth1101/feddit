@@ -36,7 +36,7 @@ class AuthRepository {
 
   Stream<User?> get authStateChange => _auth.authStateChanges();
 
-  FutureEither<UserModel> signInWithGoogle() async {
+  FutureEither<UserModel> signInWithGoogle(bool isFromLogin) async {
     try {
       final GoogleSignInAccount? currentUser = await _googleSignIn.signIn();
       final googleAuth = await (currentUser?.authentication);
@@ -44,9 +44,12 @@ class AuthRepository {
         accessToken: googleAuth?.accessToken,
         idToken: googleAuth?.idToken,
       );
-
-      UserCredential userCredential =
-          await _auth.signInWithCredential(credential);
+      UserCredential userCredential;
+      if (isFromLogin) {
+        userCredential = await _auth.signInWithCredential(credential);
+      } else {
+        userCredential = await _auth.signInWithCredential(credential);
+      }
 
       UserModel userModel;
       User user = userCredential.user!;
@@ -56,7 +59,7 @@ class AuthRepository {
           avatar: user.photoURL ?? Constant.avatarDefault,
           banner: Constant.bannerDefault,
           uid: user.uid,
-          isGuess: false,
+          isGuest: false,
           karma: 0,
           awards: [],
         );
@@ -64,6 +67,29 @@ class AuthRepository {
       } else {
         userModel = await getUserData(user.uid).first;
       }
+      return right(userModel);
+    } on FirebaseException catch (error) {
+      throw error.message!;
+    } catch (error) {
+      return left(Failure(error.toString()));
+    }
+  }
+
+  FutureEither<UserModel> signInAsGuest() async {
+    try {
+      var userCredential = await _auth.signInAnonymously();
+
+      UserModel userModel = UserModel(
+        name: 'Guest',
+        avatar: Constant.avatarDefault,
+        banner: Constant.bannerDefault,
+        uid: userCredential.user!.uid,
+        isGuest: true,
+        karma: 0,
+        awards: [],
+      );
+      await _users.doc(userCredential.user!.uid).set(userModel.toMap());
+
       return right(userModel);
     } on FirebaseException catch (error) {
       throw error.message!;

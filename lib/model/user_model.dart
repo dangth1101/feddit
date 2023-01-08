@@ -5,7 +5,7 @@ class UserModel {
   final String avatar;
   final String banner;
   final String uid;
-  final bool isGuess;
+  final bool isGuest;
   final int karma;
   final List<String> awards;
   UserModel({
@@ -13,7 +13,7 @@ class UserModel {
     required this.avatar,
     required this.banner,
     required this.uid,
-    required this.isGuess,
+    required this.isGuest,
     required this.karma,
     required this.awards,
   });
@@ -23,7 +23,7 @@ class UserModel {
     String? avatar,
     String? banner,
     String? uid,
-    bool? isGuess,
+    bool? isGuest,
     int? karma,
     List<String>? awards,
   }) {
@@ -32,7 +32,7 @@ class UserModel {
       avatar: avatar ?? this.avatar,
       banner: banner ?? this.banner,
       uid: uid ?? this.uid,
-      isGuess: isGuess ?? this.isGuess,
+      isGuest: isGuest ?? this.isGuest,
       karma: karma ?? this.karma,
       awards: awards ?? this.awards,
     );
@@ -44,7 +44,7 @@ class UserModel {
       'avatar': avatar,
       'banner': banner,
       'uid': uid,
-      'isGuess': isGuess,
+      'isGuest': isGuest,
       'karma': karma,
       'awards': awards,
     };
@@ -56,7 +56,7 @@ class UserModel {
       avatar: map['avatar'] ?? '',
       banner: map['banner'] ?? '',
       uid: map['uid'] ?? '',
-      isGuess: map['isGuess'] ?? false,
+      isGuest: map['isGuest'] ?? false,
       karma: map['karma']?.toInt() ?? 0,
       awards: List<String>.from(map['awards']),
     );
@@ -64,7 +64,7 @@ class UserModel {
 
   @override
   String toString() {
-    return 'UserModel(name: $name, avatar: $avatar, banner: $banner, uid: $uid, isGuess: $isGuess, karma: $karma, awards: $awards)';
+    return 'UserModel(name: $name, avatar: $avatar, banner: $banner, uid: $uid, isGuest: $isGuest, karma: $karma, awards: $awards)';
   }
 
   @override
@@ -76,7 +76,7 @@ class UserModel {
         other.avatar == avatar &&
         other.banner == banner &&
         other.uid == uid &&
-        other.isGuess == isGuess &&
+        other.isGuest == isGuest &&
         other.karma == karma &&
         listEquals(other.awards, awards);
   }
@@ -87,7 +87,7 @@ class UserModel {
         avatar.hashCode ^
         banner.hashCode ^
         uid.hashCode ^
-        isGuess.hashCode ^
+        isGuest.hashCode ^
         karma.hashCode ^
         awards.hashCode;
   }

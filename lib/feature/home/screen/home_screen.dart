@@ -34,6 +34,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Widget build(BuildContext context) {
     final user = ref.watch(userProvider)!;
     final currTheme = ref.watch(themeNotifierProvider);
+    final isGuest = user.isGuest;
 
     return Scaffold(
       appBar: AppBar(
@@ -71,23 +72,25 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       ),
       body: Constant.tabWidgets[_page],
       drawer: const CommunityListDrawer(),
-      endDrawer: const ProfileDrawer(),
-      bottomNavigationBar: BottomNavigationBar(
-        selectedItemColor: currTheme.iconTheme.color,
-        backgroundColor: currTheme.backgroundColor,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: ' ',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.add),
-            label: ' ',
-          ),
-        ],
-        onTap: onPageChanged,
-        currentIndex: _page,
-      ),
+      endDrawer: isGuest ? null : const ProfileDrawer(),
+      bottomNavigationBar: isGuest
+          ? null
+          : BottomNavigationBar(
+              selectedItemColor: currTheme.iconTheme.color,
+              backgroundColor: currTheme.backgroundColor,
+              items: const [
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.home),
+                  label: ' ',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.add),
+                  label: ' ',
+                ),
+              ],
+              onTap: onPageChanged,
+              currentIndex: _page,
+            ),
     );
   }
 }
