@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:feddit/core/provider/firebase_provider.dart';
 import 'package:feddit/core/provider/storage_repository_provider.dart';
 import 'package:feddit/core/utils.dart';
+import 'package:feddit/enum/enum.dart';
 import 'package:feddit/feature/authentication/controller/auth_controller.dart';
 import 'package:feddit/feature/post/repository/post_repository.dart';
 import 'package:feddit/feature/user_profile/repository/user_profile_repository.dart';
@@ -89,5 +90,15 @@ class UserProfileController extends StateNotifier<bool> {
 
   Stream<List<Post>> getUserPost(String uid) {
     return _userProfileRepository.getUserPost(uid);
+  }
+
+  void updateKarma(UserKarma karma) async {
+    UserModel user = _ref.read(userProvider)!;
+    user = user.copyWith(karma: user.karma + karma.karma);
+
+    final res = await _userProfileRepository.updateKarma(user);
+
+    res.fold((l) => null,
+        (r) => _ref.read(userProvider.notifier).update((state) => user));
   }
 }

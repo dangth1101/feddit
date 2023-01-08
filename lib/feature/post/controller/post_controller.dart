@@ -2,8 +2,10 @@ import 'dart:io';
 
 import 'package:feddit/core/provider/storage_repository_provider.dart';
 import 'package:feddit/core/utils.dart';
+import 'package:feddit/enum/enum.dart';
 import 'package:feddit/feature/authentication/controller/auth_controller.dart';
 import 'package:feddit/feature/post/repository/post_repository.dart';
+import 'package:feddit/feature/user_profile/controller/user_profile_controller.dart';
 import 'package:feddit/model/comment_model.dart';
 import 'package:feddit/model/community_model.dart';
 import 'package:feddit/model/post_mode.dart';
@@ -78,6 +80,9 @@ class PostController extends StateNotifier<bool> {
         description: description);
 
     final res = await _postRepository.addPost(post);
+    _ref
+        .read(userProfileControllerProvider.notifier)
+        .updateKarma(UserKarma.textPost);
     state = false;
 
     res.fold(
@@ -115,6 +120,9 @@ class PostController extends StateNotifier<bool> {
         link: link);
 
     final res = await _postRepository.addPost(post);
+    _ref
+        .read(userProfileControllerProvider.notifier)
+        .updateKarma(UserKarma.linkPost);
     state = false;
 
     res.fold(
@@ -158,6 +166,9 @@ class PostController extends StateNotifier<bool> {
           link: r);
 
       final res = await _postRepository.addPost(post);
+      _ref
+          .read(userProfileControllerProvider.notifier)
+          .updateKarma(UserKarma.imagePost);
       state = false;
 
       res.fold(
@@ -214,11 +225,35 @@ class PostController extends StateNotifier<bool> {
       profilePic: user.avatar,
     );
     final res = await _postRepository.addComment(comment);
+    _ref
+        .read(userProfileControllerProvider.notifier)
+        .updateKarma(UserKarma.comment);
 
     res.fold((l) => showSnackBar(context, l.message), (r) => null);
   }
 
   Stream<List<Comment>> getComments(String postId) {
     return _postRepository.getComments(postId);
+  }
+
+  void awardPost({
+    required Post post,
+    required String award,
+    required BuildContext context,
+  }) async {
+    final user = _ref.read(userProvider)!;
+
+    final res = await _postRepository.awardPost(post, award, user.uid);
+
+    res.fold((l) => showSnackBar(context, l.message), (r) {
+      _ref
+          .read(userProfileControllerProvider.notifier)
+          .updateKarma(UserKarma.awardPost);
+      _ref.read(userProvider.notifier).update((state) {
+        state?.awards.remove(award);
+        return state;
+      });
+      Routemaster.of(context).pop();
+    });
   }
 }

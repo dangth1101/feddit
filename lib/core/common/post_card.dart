@@ -30,6 +30,14 @@ class PostCard extends ConsumerWidget {
     ref.read(postControllerProvider.notifier).downvotePost(post);
   }
 
+  void awardPost(WidgetRef ref, String award, BuildContext context) async {
+    ref.read(postControllerProvider.notifier).awardPost(
+          post: post,
+          award: award,
+          context: context,
+        );
+  }
+
   void navigateToUserProfile(BuildContext context) {
     Routemaster.of(context).push('/u/${post.uid}');
   }
@@ -57,10 +65,9 @@ class PostCard extends ConsumerWidget {
           decoration: BoxDecoration(
             color: currTheme.drawerTheme.backgroundColor,
           ),
-          padding: const EdgeInsets.symmetric(
-            vertical: 10,
-          ).copyWith(right: 0),
+          padding: const EdgeInsets.symmetric(vertical: 10),
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
                 child: Column(
@@ -87,9 +94,7 @@ class PostCard extends ConsumerWidget {
                                     ),
                                   ),
                                   Padding(
-                                    padding: const EdgeInsets.only(
-                                      left: 8,
-                                    ),
+                                    padding: const EdgeInsets.only(left: 8),
                                     child: Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
@@ -127,6 +132,23 @@ class PostCard extends ConsumerWidget {
                                 ),
                             ],
                           ),
+                          if (post.awards.isNotEmpty) ...[
+                            const SizedBox(height: 5),
+                            SizedBox(
+                              height: 25,
+                              child: ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                itemCount: post.awards.length,
+                                itemBuilder: (context, index) {
+                                  final award = post.awards[index];
+                                  return Image.asset(
+                                    Constant.awards[award]!,
+                                    height: 23,
+                                  );
+                                },
+                              ),
+                            ),
+                          ],
                           Padding(
                             padding: const EdgeInsets.only(top: 10),
                             child: Text(
@@ -177,7 +199,7 @@ class PostCard extends ConsumerWidget {
                                     onPressed: () => upVotePost(ref),
                                     icon: Icon(
                                       Constant.up,
-                                      size: 30,
+                                      size: 20,
                                       color: post.upvotes.contains(user.uid)
                                           ? Pallete.redColor
                                           : null,
@@ -185,13 +207,13 @@ class PostCard extends ConsumerWidget {
                                   ),
                                   Text(
                                     '${post.upvotes.length - post.downvotes.length == 0 ? 'Vote' : post.upvotes.length - post.downvotes.length}',
-                                    style: const TextStyle(fontSize: 17),
+                                    style: const TextStyle(fontSize: 15),
                                   ),
                                   IconButton(
                                     onPressed: () => downVotePost(ref),
                                     icon: Icon(
                                       Constant.down,
-                                      size: 30,
+                                      size: 20,
                                       color: post.downvotes.contains(user.uid)
                                           ? Pallete.blueColor
                                           : null,
@@ -207,7 +229,7 @@ class PostCard extends ConsumerWidget {
                                   ),
                                   Text(
                                     '${post.commentCount == 0 ? 'Comment' : post.commentCount}',
-                                    style: const TextStyle(fontSize: 17),
+                                    style: const TextStyle(fontSize: 15),
                                   ),
                                 ],
                               ),
@@ -232,6 +254,40 @@ class PostCard extends ConsumerWidget {
                                     ),
                                     loading: () => const Loading(),
                                   ),
+                              IconButton(
+                                onPressed: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) => Dialog(
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(20),
+                                        child: GridView.builder(
+                                          shrinkWrap: true,
+                                          gridDelegate:
+                                              const SliverGridDelegateWithFixedCrossAxisCount(
+                                            crossAxisCount: 4,
+                                          ),
+                                          itemCount: user.awards.length,
+                                          itemBuilder: (context, index) {
+                                            final award = user.awards[index];
+                                            return GestureDetector(
+                                              onTap: () => awardPost(
+                                                  ref, award, context),
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: Image.asset(
+                                                    Constant.awards[award]!),
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                },
+                                icon: const Icon(Icons.card_giftcard_outlined),
+                              ),
                             ],
                           )
                         ],
